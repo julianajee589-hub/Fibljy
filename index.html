@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#315e54">
+  <title>PTE FIB-L Chunk 听写</title>
+  <link rel="manifest" href="manifest.webmanifest?v=20260803-icon">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260803-icon">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=20260803-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260803-icon">
+  <link rel="stylesheet" href="styles.css?v=20260824-science-v4">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="openSidebar" aria-label="打开主题栏">☰</button>
+      <div class="brand">
+        <span class="brand-mark"><img src="favicon.svg" alt="" aria-hidden="true"></span>
+        <div><h1>PTE FIB-L Chunk 听写</h1><p>按主题掌握 915 个答案词</p></div>
+      </div>
+      <div class="top-actions">
+        <button class="ghost-btn" id="statsBtn">学习数据</button>
+        <button class="ghost-btn" id="settingsBtn">设置</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+          <div><strong>主题训练</strong><span id="bankCount">915 词</span></div>
+          <button class="icon-btn mobile-only" id="closeSidebar">×</button>
+        </div>
+        <div class="filter-tabs" id="statusTabs">
+          <button data-status="all" class="active">全部</button>
+          <button data-status="new">未学</button>
+          <button data-status="review">待复习</button>
+          <button data-status="starred">收藏</button>
+        </div>
+        <div class="theme-list" id="themeList"></div>
+        <div class="sidebar-footer">
+          <button class="secondary-btn full" id="manageBtn">题库与进度管理</button>
+        </div>
+      </aside>
+      <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+      <main class="main">
+        <section class="session-bar" id="sessionBar">
+          <div>
+            <span class="eyebrow" id="sessionTheme">全部主题</span>
+            <h2 id="sessionTitle">Chunk 听写训练</h2>
+          </div>
+          <div class="session-controls">
+            <label>顺序
+              <select id="orderSelect"><option value="smart">智能：到期→新词→弱词</option><option value="random">随机</option><option value="original">原序号</option></select>
+            </label>
+            <label>每组
+              <select id="limitSelect"><option>10</option><option selected>20</option><option>30</option><option value="all">全部</option></select>
+            </label>
+            <button class="secondary-btn hidden" id="backFavoritesPracticeBtn" type="button">收藏列表</button>
+            <button class="primary-btn" id="startBtn">开始新一组</button>
+          </div>
+        </section>
+
+        <section class="progress-wrap" id="progressWrap">
+          <div class="progress-meta"><span id="progressText">准备开始</span><span id="scoreText">正确 0 · 错误 0</span></div>
+          <div class="progress-track"><div id="progressBar"></div></div>
+        </section>
+
+        <section class="favorites-library hidden" id="favoritesLibrary">
+          <div class="favorites-head">
+            <div>
+              <span class="eyebrow">错词自动收藏</span>
+              <h2>收藏答案词</h2>
+              <p id="favoritesSummary">0 个收藏词</p>
+            </div>
+            <div class="favorites-actions">
+              <label>范围
+                <select id="favoriteScope">
+                  <option value="all">全部收藏</option>
+                  <option value="wrong">听写错题</option>
+                  <option value="manual">手动收藏</option>
+                  <option value="C">C 类重点</option>
+                  <option value="due">今天待复习</option>
+                </select>
+              </label>
+              <label>列表排序
+                <select id="favoriteSort">
+                  <option value="recent">最近收藏</option>
+                  <option value="wrong">错误次数</option>
+                  <option value="theme">按主题</option>
+                  <option value="original">原序号</option>
+                </select>
+              </label>
+              <label>练习顺序
+                <select id="favoritePracticeOrder">
+                  <option value="smart">智能弱项优先</option>
+                  <option value="current">按当前列表</option>
+                  <option value="random">随机</option>
+                </select>
+              </label>
+              <label>每组
+                <select id="favoritePracticeLimit">
+                  <option>10</option><option selected>20</option><option>30</option><option value="all">全部</option>
+                </select>
+              </label>
+              <button class="primary-btn" id="practiceFavoritesBtn">▶ 练当前列表</button>
+            </div>
+          </div>
+          <div class="favorites-toolbar">
+            <input id="favoriteSearch" type="search" placeholder="搜索答案词 / 中文 / 主题 / Chunk" autocomplete="off">
+            <button class="secondary-btn" id="backToTrainingBtn">返回主题训练</button>
+          </div>
+          <div class="favorite-list" id="favoriteList"></div>
+          <div class="favorite-empty hidden" id="favoriteEmpty">
+            <div>☆</div><h3>还没有收藏词</h3>
+            <p>听写中只要答错一次，这道题就会自动加入收藏；也可以手动点击题目右上角 ☆。</p>
+          </div>
+        </section>
+
+        <section class="study-card" id="studyCard">
+          <div class="card-topline">
+            <span class="topic-chip" id="topicChip">全部主题</span>
+            <span class="question-no" id="questionNo">— / —</span>
+            <button class="star-btn" id="starBtn" aria-label="收藏本题">☆</button>
+          </div>
+
+          <div class="listening-zone">
+            <div class="sound-orbit"><button class="play-btn" id="playBtn" aria-label="播放 Chunk"><span>▶</span></button></div>
+            <h3 id="listenPrompt">看英文 Chunk，听音补全空格</h3>
+            <div class="masked-chunk" id="maskedChunk" aria-live="polite">点击播放键或“开始新一组”进入练习</div>
+            <p id="listenHint">选择主题后，点击播放键即可立即开始</p>
+            <div class="audio-tools">
+              <button class="mini-btn" id="repeatBtn">↻ 重播</button>
+              <button class="mini-btn" id="slowBtn">0.8× 慢速</button>
+              <button class="mini-btn" id="meaningHintBtn">中文提示（会降级）</button>
+            </div>
+            <div class="hint-box hidden" id="hintBox"></div>
+          </div>
+
+          <form class="answer-form" id="answerForm" autocomplete="off">
+            <label for="answerInput">答案词</label>
+            <div class="answer-row">
+              <input id="answerInput" type="text" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="输入你听到的答案词" disabled>
+              <button class="primary-btn submit-btn" id="submitBtn" type="submit" disabled>提交</button>
+            </div>
+            <p class="input-note">回车提交 · 空格键播放 · A = 首次作答、只听 1 遍、无慢速/提示</p>
+          </form>
+
+          <div class="feedback hidden" id="feedback">
+            <div class="feedback-head"><div><span id="resultIcon"></span><strong id="resultTitle"></strong></div><span id="attemptLabel"></span></div>
+            <div class="answer-reveal">
+              <div class="answer-word"><span>答案词</span><strong id="answerWord"></strong><em id="answerMeaning"></em></div>
+              <div class="chunk-line"><span>Chunk</span><p id="chunkText"></p></div>
+              <div class="chunk-line"><span>中文</span><p id="chunkZh"></p></div>
+            </div>
+            <div class="rating-area">
+              <span id="gradeReason">系统将根据作答过程自动判级</span>
+              <div class="rating-buttons">
+                <button data-grade="A" class="grade-a">A 完全正确</button>
+                <button data-grade="B" class="grade-b">B 个别犹豫</button>
+                <button data-grade="C" class="grade-c">C 忘记很多</button>
+              </div>
+            </div>
+            <button class="primary-btn next-btn" id="nextBtn">下一题 →</button>
+          </div>
+        </section>
+
+        <section class="empty-state hidden" id="emptyState"><div>✓</div><h3>当前筛选下没有题目</h3><p>可以切换主题或状态后重新开始。</p></section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="settingsDialog" class="modal">
+    <form method="dialog"><div class="modal-head"><h3>听写设置</h3><button class="icon-btn">×</button></div>
+      <div class="setting-grid">
+        <label>口音<select id="accentSelect"><option value="auto">自动匹配（推荐）</option><option value="us">美式英语</option><option value="gb">英式英语</option><option value="au">澳式英语</option></select></label>
+        <label>英文语音<select id="voiceSelect"></select></label>
+        <p id="voiceRecommendation" class="dialog-note"></p>
+        <button type="button" class="secondary-btn" id="previewVoiceBtn">▶ 试听自然语音</button>
+        <label>默认语速<input id="rateRange" type="range" min="0.65" max="1.15" step="0.05"><span id="rateValue"></span></label>
+        <label class="switch-row"><span>进入新题自动播放</span><input id="autoplayToggle" type="checkbox"></label>
+        <label class="switch-row"><span>答错后正常语速重拼一次</span><input id="retryToggle" type="checkbox"></label>
+        <label class="switch-row"><span>C 类题隔至少 4 题再出现</span><input id="requeueToggle" type="checkbox"></label>
+      </div>
+      <p class="dialog-note">系统会优先选择设备中的 Natural、Neural、Premium 或 Enhanced 英文语音。推荐语速为 0.85–0.95×；不同设备可用语音不同。</p>
+    </form>
+  </dialog>
+
+  <dialog id="statsDialog" class="modal wide">
+    <form method="dialog"><div class="modal-head"><h3>学习数据</h3><button class="icon-btn">×</button></div>
+      <div class="stat-cards" id="statCards"></div>
+      <div class="mastery-bars" id="masteryBars"></div>
+    </form>
+  </dialog>
+
+  <dialog id="manageDialog" class="modal wide">
+    <form method="dialog"><div class="modal-head"><h3>题库与进度管理</h3><button class="icon-btn">×</button></div>
+      <div class="manage-section"><h4>进度备份</h4><p>导出收藏、A/B/C 分类、答题次数和复习日期；换设备时可导入恢复。</p><div class="button-row"><button type="button" class="secondary-btn" id="exportProgress">导出进度 JSON</button><label class="secondary-btn file-label">导入进度 JSON<input type="file" id="importProgress" accept="application/json"></label></div></div>
+      <div class="manage-section"><h4>题库备份</h4><p>导出当前 915 词题库，JSON 中可修改、增加或删除词条后再导入。</p><div class="button-row"><button type="button" class="secondary-btn" id="exportBank">导出题库 JSON</button><label class="secondary-btn file-label">导入题库 JSON<input type="file" id="importBank" accept="application/json"></label><button type="button" class="ghost-danger" id="restoreBank">恢复内置题库</button></div></div>
+      <div class="manage-section danger-zone"><h4>清空学习记录</h4><p>只清空学习进度，不删除题库。</p><button type="button" class="danger-btn" id="resetProgress">清空全部进度</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+  <script src="data.js?v=20260824-science-v4"></script><script src="app.js?v=20260824-science-v4"></script>
+</body>
+</html>
